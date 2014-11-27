@@ -7,7 +7,7 @@ class EloquentDisqus {
 	/**
 	 * @var array
 	 */
-	private $config = [];
+	private $config;
 
 	/**
 	 * @var Factory
@@ -17,12 +17,22 @@ class EloquentDisqus {
 	const THREAD_HASH = '#disqus_thread';
 
 	/**
-	 * @param $config
 	 * @param Factory $view
 	 */
-	public function __construct($config, Factory $view) {
-		$this->config = $config;
+	public function __construct(Factory $view) {
 		$this->view = $view;
+		$this->config = \Config::get('eloquent-disqus::disqus');
+	}
+
+	/**
+	 * Get configuration key by dot notation
+	 * @param $path
+	 * @param null $default
+	 *
+	 * @return mixed
+	 */
+	public function getConfig($path, $default = null) {
+		return array_get($this->config, $path, $default);
 	}
 
 	/**
@@ -42,8 +52,8 @@ class EloquentDisqus {
 	 */
     public function begin($title = null, $url = null, $identifier = null) {
 	    return $this->view->make('eloquent-disqus::discussion')->with([
-		    'shortname' => $this->config['shortname'],
-		    'category' => $this->config['category'],
+		    'shortname' => $this->getConfig('app.shortname'),
+		    'category' => $this->getConfig('app.category'),
 		    'title' => $title,
 		    'url' => $url,
 		    'identifier' => $identifier,
@@ -56,7 +66,7 @@ class EloquentDisqus {
 	 */
 	public function initCounter() {
 		return $this->view->make('eloquent-disqus::discussion')->with([
-				'shortname'  => $this->config['shortname'],
+				'shortname'  => $this->getConfig('app.shortname'),
 			]
 		);
 	}
@@ -78,7 +88,7 @@ class EloquentDisqus {
 			$dataAttr = 'data-disqus-identifier="'.$url.'"';
 		}
 
-		return '<span '.$dataAttr.' '.$attributes.'>' . $this->config['default_title'] . '</span>';
+		return '<span '.$dataAttr.' '.$attributes.'>' . $this->getConfig('html.default_counter') . '</span>';
 	}
 
 	/**
@@ -100,7 +110,7 @@ class EloquentDisqus {
 			$attributes['data-disqus-identifier'] = $identifier;
 		}
 
-		return \HTML::link($url, $this->config['default_title'], $attributes, $secure);
+		return \HTML::link($url, $this->getConfig('html.default_counter'), $attributes, $secure);
 	}
 
 	/**
@@ -123,7 +133,7 @@ class EloquentDisqus {
 			$attributes['data-disqus-identifier'] = $identifier;
 		}
 
-		return \Html::linkAction($action, $this->config['default_title'], $parameters, $attributes);
+		return \Html::linkAction($action, $this->getConfig('html.default_counter'), $parameters, $attributes);
 	}
 
 	/**
@@ -146,7 +156,7 @@ class EloquentDisqus {
 			$attributes['data-disqus-identifier'] = $identifier;
 		}
 
-		return \Html::linkRoute($name, $this->config['default_title'], $parameters, $attributes);
+		return \Html::linkRoute($name, $this->getConfig('html.default_counter'), $parameters, $attributes);
 	}
 
 }

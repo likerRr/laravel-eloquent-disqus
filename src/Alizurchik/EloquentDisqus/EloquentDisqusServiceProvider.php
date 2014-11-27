@@ -28,9 +28,8 @@ class EloquentDisqusServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-//		View::addNamespace('eloquent-disqus', __DIR__ . '/../..');
 		$this->app['eloquent.disqus'] = $this->app->share(function ($app) {
-				return new EloquentDisqus($app['config']->get('eloquent-disqus::disqus'), $app['view']);
+				return new EloquentDisqus($app['view']);
 			}
 		);
 	}
