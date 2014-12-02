@@ -65,7 +65,7 @@ class EloquentDisqus {
 	 * @return mixed
 	 */
 	public function initCounter() {
-		return $this->view->make('eloquent-disqus::discussion')->with([
+		return $this->view->make('eloquent-disqus::counter')->with([
 				'shortname'  => $this->getConfig('app.shortname'),
 			]
 		);
